@@ -68,7 +68,7 @@ function TodoContainer() {
         .filter((todo) => todo.status === false)
         .map((item) => {
             return <div className='flex' key={item.id}>
-                <input type="checkbox" name="" id="" onChange={(e) => {
+                <input type="checkbox" name="" id=""  onChange={(e) => {
                     // console.log(e.target.checked);
                     dispatch(setStatus({
                         id: item.id,
@@ -99,7 +99,7 @@ function TodoContainer() {
 
     const allTodo = items.map((item) => (
         <div className='flex' key={item.id}>
-            <input type="checkbox" name="" id="" onChange={(e) => {
+            <input type="checkbox" name="" id="" value={item.status} onChange={(e) => {
                 // console.log(e.target.checked);
                 dispatch(setStatus({
                     id: item.id,
