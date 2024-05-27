@@ -1,11 +1,7 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const initialState = {
-    todos: [{
-        id:1,
-        task: "Learn Redux",
-        status: true
-    }],
+    todos: [],
     category: "All",
 }
 
@@ -34,9 +30,14 @@ const todoSlice = createSlice({
         },
         setCategory(state,action){
             state.category = action.payload;
+        },
+        setStatus(state,action){
+            const {id, status} = action.payload;
+            const existingTask = state.todos.find((item) => item.id === id);
+            existingTask.status = status;
         }
     }
 })
 
-export const { addTodo, deleteTodo, updateTodo , setCategory} = todoSlice.actions;
+export const { addTodo, deleteTodo, updateTodo , setCategory, setStatus} = todoSlice.actions;
 export default todoSlice.reducer

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteTodo, updateTodo } from '../Redux/todoSlice';
+import { deleteTodo, updateTodo, setStatus } from '../Redux/todoSlice';
 
 function TodoContainer() {
     const [isEditing, setIsEditing] = useState(null);
@@ -34,6 +34,14 @@ function TodoContainer() {
         .filter((todo) => todo.status === true)
         .map((item) => {
             return <div className='flex' key={item.id}>
+                <input type="checkbox" name="" id="" value={item.status} onChange={(e) => {
+                    // console.log(e.target.checked);
+                    dispatch(setStatus({
+                        id: item.id,
+                        status: e.target.checked
+                    }))
+
+                }} />
                 {isEditing === item.id ? (
                     <input
                         type="text"
@@ -44,7 +52,7 @@ function TodoContainer() {
                 ) : (
                     <li
                         onClick={() => handleEdit(item)}
-                        className='cursor-pointer'
+                        className={`cursor-pointer ${item.status ? 'line-through' : ''}`}
                     >
                         {item.task}
                     </li>
@@ -59,7 +67,14 @@ function TodoContainer() {
     const uncompleteTodo = items
         .filter((todo) => todo.status === false)
         .map((item) => {
-          return  <div className='flex' key={item.id}>
+            return <div className='flex' key={item.id}>
+                <input type="checkbox" name="" id="" onChange={(e) => {
+                    // console.log(e.target.checked);
+                    dispatch(setStatus({
+                        id: item.id,
+                        status: e.target.checked
+                    }))
+                }} />
                 {isEditing === item.id ? (
                     <input
                         type="text"
@@ -70,7 +85,7 @@ function TodoContainer() {
                 ) : (
                     <li
                         onClick={() => handleEdit(item)}
-                        className='cursor-pointer'
+                        className={`cursor-pointer ${item.status ? 'line-through' : ''}`}
                     >
                         {item.task}
                     </li>
@@ -84,6 +99,13 @@ function TodoContainer() {
 
     const allTodo = items.map((item) => (
         <div className='flex' key={item.id}>
+            <input type="checkbox" name="" id="" onChange={(e) => {
+                // console.log(e.target.checked);
+                dispatch(setStatus({
+                    id: item.id,
+                    status: e.target.checked
+                }))
+            }} />
             {isEditing === item.id ? (
                 <input
                     type="text"
@@ -94,7 +116,7 @@ function TodoContainer() {
             ) : (
                 <li
                     onClick={() => handleEdit(item)}
-                    className='cursor-pointer'
+                    className={`cursor-pointer ${item.status ? 'line-through' : ''}`}
                 >
                     {item.task}
                 </li>
@@ -109,11 +131,11 @@ function TodoContainer() {
     return (
         <div className='flex justify-center'>
             <ul className='text-white'>
-            {
-                category === 'Completed' ? completedTodo
-                : category === 'Not Completed'? uncompleteTodo
-                : allTodo
-            }
+                {
+                    category === 'Completed' ? completedTodo
+                        : category === 'Not Completed' ? uncompleteTodo
+                            : allTodo
+                }
             </ul>
         </div>
     );
