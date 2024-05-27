@@ -1,48 +1,122 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
-import { deleteTodo } from '../Redux/todoSlice'
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteTodo, updateTodo } from '../Redux/todoSlice';
 
 function TodoContainer() {
-    const [isOnly,setIsOnly] = useState(true)
-    const items = useSelector((state) => {
-        return state.todo
-    })
-
+    const [isEditing, setIsEditing] = useState(null);
+    const [editTask, setEditTask] = useState("");
+    const category = useSelector((state) => state.todo.category);
+    console.log(typeof category);
+    const items = useSelector((state) => state.todo.todos);
     const dispatch = useDispatch();
 
-    const handleDelete = (e) => {
-        dispatch(deleteTodo(e))
-    }
+    const handleDelete = (id) => {
+        dispatch(deleteTodo(id));
+    };
+
+    const handleEdit = (item) => {
+        setIsEditing(item.id);
+        setEditTask(item.task);
+    };
 
     const handleUpdate = () => {
-        setIsOnly((prev) => !prev)
-    }
+        if (editTask.trim()) {
+            dispatch(updateTodo({
+                id: isEditing,
+                task: editTask
+            }));
+        }
+        setIsEditing(null);
+        setEditTask("");
+    };
+
+    const completedTodo = items
+        .filter((todo) => todo.status === true)
+        .map((item) => {
+            return <div className='flex' key={item.id}>
+                {isEditing === item.id ? (
+                    <input
+                        type="text"
+                        value={editTask}
+                        onChange={(e) => setEditTask(e.target.value)}
+                        className='text-black outline-none'
+                    />
+                ) : (
+                    <li
+                        onClick={() => handleEdit(item)}
+                        className='cursor-pointer'
+                    >
+                        {item.task}
+                    </li>
+                )}
+                {isEditing === item.id && (
+                    <button onClick={handleUpdate} className='ml-2'>💾</button>
+                )}
+                <button onClick={() => handleDelete(item.id)} className='ml-2'>❌</button>
+            </div>
+        })
+
+    const uncompleteTodo = items
+        .filter((todo) => todo.status === false)
+        .map((item) => {
+          return  <div className='flex' key={item.id}>
+                {isEditing === item.id ? (
+                    <input
+                        type="text"
+                        value={editTask}
+                        onChange={(e) => setEditTask(e.target.value)}
+                        className='text-black outline-none'
+                    />
+                ) : (
+                    <li
+                        onClick={() => handleEdit(item)}
+                        className='cursor-pointer'
+                    >
+                        {item.task}
+                    </li>
+                )}
+                {isEditing === item.id && (
+                    <button onClick={handleUpdate} className='ml-2'>💾</button>
+                )}
+                <button onClick={() => handleDelete(item.id)} className='ml-2'>❌</button>
+            </div>
+        })
+
+    const allTodo = items.map((item) => (
+        <div className='flex' key={item.id}>
+            {isEditing === item.id ? (
+                <input
+                    type="text"
+                    value={editTask}
+                    onChange={(e) => setEditTask(e.target.value)}
+                    className='text-black outline-none'
+                />
+            ) : (
+                <li
+                    onClick={() => handleEdit(item)}
+                    className='cursor-pointer'
+                >
+                    {item.task}
+                </li>
+            )}
+            {isEditing === item.id && (
+                <button onClick={handleUpdate} className='ml-2'>💾</button>
+            )}
+            <button onClick={() => handleDelete(item.id)} className='ml-2'>❌</button>
+        </div>
+    ))
 
     return (
         <div className='flex justify-center'>
             <ul className='text-white'>
-                {items.map((item) => {
-                    return (
-                        <div className='flex'>
-                            <li key={item.id} contentEditable={isOnly} className='outline-none'>
-                                {item.task}
-                            </li>
-                            <button
-                            onClick={handleUpdate}
-                            >🔂</button>
-                            <button 
-                            onClick={() => {
-                                handleDelete(item.id)
-                            }}
-                            >❌</button>
-                        </div>
-
-                    )
-                })}
+            {
+                category === 'Completed' ? completedTodo
+                : category === 'Not Completed'? uncompleteTodo
+                : allTodo
+            }
             </ul>
         </div>
-    )
+    );
 }
 
-export default TodoContainer
+export default TodoContainer;

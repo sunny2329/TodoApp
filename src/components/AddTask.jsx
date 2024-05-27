@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { addTodo } from '../Redux/todoSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodo , setCategory} from '../Redux/todoSlice';
 
 export default function AddTask() {
     const [task,setTask] = useState("");
@@ -22,6 +22,13 @@ export default function AddTask() {
       <button
       onClick={handleAdd}
       >Add</button>
+      <select name="" id="" className='ml-5' onChange={(e)=>{
+        dispatch(setCategory(e.target.value))
+      }}>
+        <option value="All">All</option>
+        <option value="Completed">Completed</option>
+        <option value="Not Completed">Not Completed</option>
+      </select>
     </div>
   )
 }
